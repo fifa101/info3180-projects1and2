@@ -7,9 +7,22 @@ This file creates your application.
 """
 
 from app import app
-from flask import render_template, request, redirect, url_for
+from app import db
+from app.models import User
+from flask import render_template, request, redirect, url_for, flash, g
+from flask import jsonify
+import os
+from sqlalchemy.sql import exists
 
+from .forms import UserProfileForm
 
+from datetime import datetime
+
+from random import randint
+
+from werkzeug import secure_filename
+
+import psycopg2
 ###
 # Routing for your application.
 ###
@@ -25,6 +38,64 @@ def about():
     """Render the website's about page."""
     return render_template('about.html')
 
+@app.route('/profile', methods=['POST', 'GET'])
+def add_profile():
+    """Add a profile"""
+    form = UserProfileForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            username = request.form['username'].strip()
+            firstname = request.form['firstname'].strip()
+            lastname = request.form['lastname'].strip()
+            sex   = request.form['sex']
+            age   = request.form['age']
+            image = request.files['img']
+            
+            while True:
+                userid = randint(620000000,620099999)
+                if not db.session.query(exists().where(User.userid == str(userid))).scalar():
+                    break
+                  
+            filename = "{}-{}".format(userid,secure_filename(image.filename))
+            filepath = "app/static/uploads/{}".format(filename)
+            image.save(filepath)
+            
+            user = User(str(userid),username,firstname,lastname,filename,sex,age,datetime.now(),0,0)
+            db.session.add(user)
+            db.session.commit()
+            
+            flash('User successfully added!')
+            return redirect(url_for('profiles'))
+        
+    return render_template('add_profile.html', form=form)
+
+
+@app.route('/profiles', methods=['POST','GET'])
+def profiles():
+    #View a list of profiles
+    
+    ulist = []
+    result = db.session.query(User).all()
+    for user in result:
+        ulist.append({"username":user.username,"userid":user.userid})
+        if request.headers['Content-Type'] == 'application/json' and request.method == 'POST':
+            return jsonify(users = ulist)
+    return render_template('profiles.html',ulist=ulist)
+
+@app.route('/profile/<userid>', methods=['GET','POST'])
+def profile(userid):
+    #View a profile
+    
+    if not db.session.query(exists().where(User.userid == userid)).scalar():
+        flash('Oops, we couldn\'t find that user.')
+    else:
+        user=db.session.query(User).filter(User.userid == userid).first()
+        if request.headers['Content-Type'] == 'application/json' and request.method == 'POST':
+            return jsonify(userid=user.userid, username=user.username, image=user.image, sex=user.sex, age=user.age,\
+                    profile_added_on=user.profile_added_on, high_score=user.high_score, tdollars=user.tdollars)
+        return render_template('profile.html',filename=user.image,name=user.firstname+' '+user.lastname, time=user.profile_added_on.strftime("Profile Added On: %a, %d %b %Y"),\
+                            username=user.username, userid=user.userid, sex=user.sex, age=user.age, high_score=user.high_score, tdollars=user.tdollars)
+    return redirect(url_for('profiles'))
 
 ###
 # The functions below should be applicable to all Flask apps.
@@ -35,6 +106,15 @@ def send_text_file(file_name):
     """Send your static text file."""
     file_dot_text = file_name + '.txt'
     return app.send_static_file(file_dot_text)
+
+@app.before_request
+def before_request():
+    g.db = psycopg2.connect("dbname='database' user='postgres' host='localhost' password='mypassword'")
+    
+
+@app.teardown_request
+def teardown_request(exception):
+    g.db.close()
 
 
 @app.after_request

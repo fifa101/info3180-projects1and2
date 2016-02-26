@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+
+<div class="container">
+    
+    <div class="page-header">
+        <h1>Profile</h1>
+    </div>
+    
+    <section style="padding-bottom: 50px; padding-top: 50px;">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="/static/uploads/{{ filename }}" class="img-rounded img-responsive" />
+            </div>
+            <div class="col-md-8">
+                <div class="well">
+                    {{ name }}
+                </div>
+                <div class="well">
+                    {{ time }}
+                </div>
+                <div class="well">
+                    <p>Username: {{ username }} <br>
+                    ID: {{ userid }} <br>
+                    Sex: {{ sex }} <br> 
+                    Age: {{ age }} <br>
+                    Highest Score: {{ high_score }} <br>
+                    TDollars: {{ tdollars }} </p>
+                </div>
+            </div>
+        </div>
+        <!-- ROW END -->
+    </section>
+    
+</div>
+
+{% endblock %}

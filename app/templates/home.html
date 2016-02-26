@@ -6,4 +6,15 @@
 
 
 {% block main %}
+
+<div class="container">
+  <div class="jumbotron">
+    <h1>Welcome to DynamicProfiles!</h1>      
+    <p>DynamicProfiles allows you to create profiles and view all the profiles created.</p>
+    <p>
+      <a href="{{ url_for('add_profile') }}" class = "btn btn-primary btn-lg" role = "button">Create a Profile</a>
+    </p>
+  </div>
+</div>
+
 {% endblock %}
