@@ -12,26 +12,25 @@
     <section style="padding-bottom: 50px; padding-top: 50px;">
         <div class="row">
             <div class="col-md-4">
-                <img src="/static/uploads/{{ filename }}" class="img-rounded img-responsive" />
+                <img src="/static/uploads/{{ user['image'] }}" class="img-rounded img-responsive" />
             </div>
             <div class="col-md-8">
                 <div class="well">
-                    {{ name }}
+                    {{ user['firstname'] }} {{ user['lastname'] }}
                 </div>
                 <div class="well">
-                    {{ time }}
+                    {{ user['profile_added_on'].strftime("Profile Added On: %a, %d %b %Y") }}
                 </div>
                 <div class="well">
-                    <p>Username: {{ username }} <br>
-                    ID: {{ userid }} <br>
-                    Sex: {{ sex }} <br> 
-                    Age: {{ age }} <br>
-                    Highest Score: {{ high_score }} <br>
-                    TDollars: {{ tdollars }} </p>
+                    <p>Username: {{ user['username'] }} <br>
+                    ID: {{ user['userid'] }} <br>
+                    Sex: {{ user['sex'] }} <br> 
+                    Age: {{ user['age'] }} <br>
+                    Highest Score: {{ user['high_score'] }} <br>
+                    TDollars: {{ user['tdollars'] }} </p>
                 </div>
             </div>
         </div>
-        <!-- ROW END -->
     </section>
     
 </div>

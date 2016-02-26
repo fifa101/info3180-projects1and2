@@ -6,23 +6,17 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-from app import app
-from app import db
+from app import app, db
 from app.models import User
-from flask import render_template, request, redirect, url_for, flash, g
-from flask import jsonify
-import os
+from flask import render_template, request, redirect, url_for, flash, g, jsonify
 from sqlalchemy.sql import exists
-
 from .forms import UserProfileForm
-
 from datetime import datetime
-
 from random import randint
-
 from werkzeug import secure_filename
 
 import psycopg2
+
 ###
 # Routing for your application.
 ###
@@ -33,18 +27,13 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/about/')
-def about():
-    """Render the website's about page."""
-    return render_template('about.html')
-
 @app.route('/profile', methods=['POST', 'GET'])
 def add_profile():
     """Add a profile"""
     form = UserProfileForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            username = request.form['username'].strip()
+            username  = request.form['username'].strip()
             firstname = request.form['firstname'].strip()
             lastname = request.form['lastname'].strip()
             sex   = request.form['sex']
@@ -65,37 +54,35 @@ def add_profile():
             db.session.commit()
             
             flash('User successfully added!')
-            return redirect(url_for('profiles'))
+            return redirect(url_for('list_profiles'))
         
     return render_template('add_profile.html', form=form)
 
 
 @app.route('/profiles', methods=['POST','GET'])
-def profiles():
-    #View a list of profiles
-    
-    ulist = []
-    result = db.session.query(User).all()
+def list_profiles():
+    """View a list of profiles"""
+    ulist   = []
+    result  = db.session.query(User).all()
     for user in result:
         ulist.append({"username":user.username,"userid":user.userid})
         if request.headers['Content-Type'] == 'application/json' and request.method == 'POST':
             return jsonify(users = ulist)
     return render_template('profiles.html',ulist=ulist)
 
+
 @app.route('/profile/<userid>', methods=['GET','POST'])
-def profile(userid):
-    #View a profile
-    
-    if not db.session.query(exists().where(User.userid == userid)).scalar():
+def view_profile(userid):
+    """View a profile"""
+    user = db.session.query(User).filter(User.userid == userid).first()
+    if not user:
         flash('Oops, we couldn\'t find that user.')
     else:
-        user=db.session.query(User).filter(User.userid == userid).first()
         if request.headers['Content-Type'] == 'application/json' and request.method == 'POST':
             return jsonify(userid=user.userid, username=user.username, image=user.image, sex=user.sex, age=user.age,\
                     profile_added_on=user.profile_added_on, high_score=user.high_score, tdollars=user.tdollars)
-        return render_template('profile.html',filename=user.image,name=user.firstname+' '+user.lastname, time=user.profile_added_on.strftime("Profile Added On: %a, %d %b %Y"),\
-                            username=user.username, userid=user.userid, sex=user.sex, age=user.age, high_score=user.high_score, tdollars=user.tdollars)
-    return redirect(url_for('profiles'))
+        return render_template('profile.html', user=user)
+    return redirect(url_for('list_profiles'))
 
 ###
 # The functions below should be applicable to all Flask apps.
