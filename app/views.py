@@ -96,7 +96,7 @@ def send_text_file(file_name):
 
 @app.before_request
 def before_request():
-    g.db = psycopg2.connect("dbname='database' user='postgres' host='localhost' password='mypassword'")
+    g.db = psycopg2.connect("dbname='dc28223s1h0kss' user='aqiflibqwlpwvj' host='ec2-54-235-170-124.compute-1.amazonaws.com' password='S1_-tL3b4reJVTvaFh-uzcctqf'")
     
 
 @app.teardown_request
