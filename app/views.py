@@ -53,7 +53,7 @@ def add_profile():
             db.session.add(user)
             db.session.commit()
             
-            flash('User successfully added!')
+            flash('User successfully added!', category='success')
             return redirect(url_for('list_profiles'))
         
     return render_template('add_profile.html', form=form)
@@ -76,7 +76,7 @@ def view_profile(userid):
     """View a profile"""
     user = db.session.query(User).filter(User.userid == userid).first()
     if not user:
-        flash('Oops, we couldn\'t find that user.')
+        flash('Oops, we couldn\'t find that user.', category='danger')
     else:
         if request.headers['Content-Type'] == 'application/json' and request.method == 'POST':
             return jsonify(userid=user.userid, username=user.username, image=user.image, sex=user.sex, age=user.age,\

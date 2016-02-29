@@ -2,19 +2,24 @@
 
 {% block main %}
 
-<div class="container">
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="alert alert-danger">
-                <ul>
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
-    {% endwith %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul>
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            <li>
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message }}
+            </li>
+          </div>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
     
+<div class="container">
+
     <table class="table">
     <thead>
       <tr>
@@ -31,7 +36,7 @@
         {% endfor %}
         
     </tbody>
-  </table>
+    </table>
   
 </div>
 
