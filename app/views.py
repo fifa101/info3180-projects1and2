@@ -88,6 +88,11 @@ def view_profile(userid):
 # The functions below should be applicable to all Flask apps.
 ###
 
+@app.route('/<file_name>')
+def send_img_file(file_name):
+    """Send your static image file."""
+    return app.send_static_file(file_name)
+
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
     """Send your static text file."""
