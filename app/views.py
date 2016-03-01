@@ -66,8 +66,8 @@ def list_profiles():
     result  = db.session.query(User).all()
     for user in result:
         ulist.append({"username":user.username,"userid":user.userid})
-        """if request.headers['Content-Type'] == 'application/json' and request.method == 'POST':
-            return jsonify(users = ulist)"""
+        if request.headers.get('content-type') == 'application/json' and request.method == 'POST':
+            return jsonify(users = ulist)
     return render_template('profiles.html',ulist=ulist)
 
 
@@ -78,20 +78,21 @@ def view_profile(userid):
     if not user:
         flash('Oops, we couldn\'t find that user.', category='danger')
     else:
-        """if request.headers['Content-Type'] == 'application/json' and request.method == 'POST':
+        if request.headers.get('content-type') == 'application/json' and request.method == 'POST':
             return jsonify(userid=user.userid, username=user.username, image=user.image, sex=user.sex, age=user.age,\
-                    profile_added_on=user.profile_added_on, high_score=user.high_score, tdollars=user.tdollars)"""
+                    profile_added_on=user.profile_added_on, high_score=user.high_score, tdollars=user.tdollars)
         return render_template('profile.html', user=user)
     return redirect(url_for('list_profiles'))
 
 ###
 # The functions below should be applicable to all Flask apps.
 ###
-
+"""
 @app.route('/static/uploads/<file_name>')
 def send_img_file(file_name):
-    """Send your static image file."""
+    #Send your image file.
     return app.send_from_directory('/static/uploads',file_name)
+"""
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
