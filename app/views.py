@@ -91,7 +91,7 @@ def view_profile(userid):
 @app.route('/profile/<userid>/<file_name>')
 def send_img_file(file_name):
     """Send your static image file."""
-    return app.send_static_file(file_name)
+    return app.send_from_directory('/static/uploads',file_name)
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
