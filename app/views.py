@@ -15,7 +15,6 @@ from datetime import datetime
 from random import randint
 from werkzeug import secure_filename
 
-import psycopg2
 
 ###
 # Routing for your application.
@@ -49,7 +48,7 @@ def add_profile():
             filepath = "app/static/uploads/{}".format(filename)
             image.save(filepath)
             
-            user = User(str(userid),username,firstname,lastname,filename,sex,age,datetime.now(),0,0)
+            user = User(str(userid),username,firstname,lastname,filename,sex,age,datetime.now())
             db.session.add(user)
             db.session.commit()
             
@@ -66,48 +65,33 @@ def list_profiles():
     result  = db.session.query(User).all()
     for user in result:
         ulist.append({"username":user.username,"userid":user.userid})
-        if request.headers.get('content-type') == 'application/json' and request.method == 'POST':
+        if request.headers.get('content-type') == 'application/json' or request.method == 'POST':
             return jsonify(users = ulist)
     return render_template('profiles.html',ulist=ulist)
 
 
-@app.route('/profile/<userid>', methods=['GET','POST'])
+@app.route('/profile/<int:userid>', methods=['POST','GET'])
 def view_profile(userid):
     """View a profile"""
     user = db.session.query(User).filter(User.userid == userid).first()
     if not user:
         flash('Oops, we couldn\'t find that user.', category='danger')
     else:
-        if request.headers.get('content-type') == 'application/json' and request.method == 'POST':
+        if request.headers.get('content-type') == 'application/json' or request.method == 'POST':
             return jsonify(userid=user.userid, username=user.username, image=user.image, sex=user.sex, age=user.age,\
-                    profile_added_on=user.profile_added_on, high_score=user.high_score, tdollars=user.tdollars)
+                          profile_added_on=user.profile_added_on)
         return render_template('profile.html', user=user)
     return redirect(url_for('list_profiles'))
 
 ###
 # The functions below should be applicable to all Flask apps.
 ###
-"""
-@app.route('/static/uploads/<file_name>')
-def send_img_file(file_name):
-    #Send your image file.
-    return app.send_from_directory('/static/uploads',file_name)
-"""
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
     """Send your static text file."""
     file_dot_text = file_name + '.txt'
     return app.send_static_file(file_dot_text)
-
-@app.before_request
-def before_request():
-    g.db = psycopg2.connect("dbname='dekr979piqn71p' user='hnqcbbghvcywmy' host='ec2-54-163-228-109.compute-1.amazonaws.com' password='76uhK_ne1X5GkARoQ4zXfT2vBP' port='5432'")
-    
-
-@app.teardown_request
-def teardown_request(exception):
-    g.db.close()
 
 
 @app.after_request
