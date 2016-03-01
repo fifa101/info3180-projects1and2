@@ -94,7 +94,7 @@ def send_text_file(file_name):
     file_dot_text = file_name + '.txt'
     return app.send_static_file(file_dot_text)
 
-"""@app.before_request
+@app.before_request
 def before_request():
     g.db = psycopg2.connect("dbname='dekr979piqn71p' user='hnqcbbghvcywmy' host='ec2-54-163-228-109.compute-1.amazonaws.com' password='76uhK_ne1X5GkARoQ4zXfT2vBP' port='5432'")
     
@@ -102,7 +102,7 @@ def before_request():
 @app.teardown_request
 def teardown_request(exception):
     g.db.close()
-"""
+
 
 @app.after_request
 def add_header(response):
