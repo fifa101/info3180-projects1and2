@@ -73,7 +73,7 @@ def list_profiles():
 @app.route('/profile/<int:userid>', methods=['POST','GET'])
 def view_profile(userid):
     """View a profile"""
-    user = db.session.query(User).filter(User.userid == userid).first()
+    user = db.session.query(User).filter(User.userid == str(userid)).first()
     if not user:
         flash('Oops, we couldn\'t find that user.', category='danger')
     else:
