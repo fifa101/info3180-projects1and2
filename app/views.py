@@ -14,10 +14,7 @@ from .forms import UserProfileForm
 from datetime import datetime
 from random import randint
 from werkzeug import secure_filename
-import os
 
-UPLOAD_FOLDER = '/static/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ###
 # Routing for your application.
@@ -48,8 +45,8 @@ def add_profile():
                     break
                   
             filename = "{}-{}".format(userid,secure_filename(image.filename))
-            #filepath = "/app/static/uploads/{}".format(filename)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filepath = "/static/uploads/{}".format(filename)
+            image.save(filepath)
             
             user = User(str(userid),username,firstname,lastname,filename,sex,age,datetime.now())
             db.session.add(user)
