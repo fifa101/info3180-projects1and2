@@ -45,7 +45,7 @@ def add_profile():
                     break
                   
             filename = "{}-{}".format(userid,secure_filename(image.filename))
-            filepath = "/static/uploads/{}".format(filename)
+            filepath = "static/uploads/{}".format(filename)
             image.save(filepath)
             
             user = User(str(userid),username,firstname,lastname,filename,sex,age,datetime.now())
