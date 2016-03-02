@@ -65,8 +65,8 @@ def list_profiles():
     result  = db.session.query(User).all()
     for user in result:
         ulist.append({"username":user.username,"userid":user.userid})
-        if request.headers.get('content-type') == 'application/json' or request.method == 'POST':
-            return jsonify(users = ulist)
+    if request.headers.get('content-type') == 'application/json' or request.method == 'POST':
+        return jsonify(users = ulist)
     return render_template('profiles.html',ulist=ulist)
 
 
