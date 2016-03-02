@@ -16,7 +16,7 @@ from random import randint
 from werkzeug import secure_filename
 import os
 
-UPLOAD_FOLDER = 'app/static/uploads'
+UPLOAD_FOLDER = '/static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ###
